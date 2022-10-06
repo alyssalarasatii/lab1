@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h5>Nama: </h5>
+<p>{{nama}}</p>
+
+<table>
+    <tr>
+    <th>Nama Barang</th>
+    <th>Harga Barang</th>
+    <th>Deskripsi</th>
+    </tr>
+    {% comment %} Tambahkan data di bawah baris ini {% endcomment %}
+    <script>
+        $(document).ready(function (){
+    $.getJSON({                                      
+      url: 'json/',              
+      type: "GET",          
+      data: "artist=<?php echo $artist; ?>",
+      dataType: 'html',                
+      beforeSend: function() {
+          $('#current_page').append("loading..");
+          },
+      success: finished(html),
+   });
+});
+
+function finished(result) {
+    $('#current_page').append(result);
+};
+    </script>
+    <script>
+        function yaa(event){
+            event.prevenDefault()
+            $.post("/ajax/submit/"),
+                {
+                    nama_barang : document.getElementById("nama_barang").value,
+                    harga_barang : document.getElementById("harga_barang").value,
+                    deskripsi: document.getElementById("deskripsi").value,
+                }
+            };
+            return false;
+        
+    </script>
+
+    <script type ="text/javascript">
+    
+        function refresh() {
+            $.ajax({
+                type: "GET",
+                url: "/wishlist/json",
+                dataType:"json",
+                success: function(data){
+                    datanya = data
+                }
+            });
+            return datanya;
+        
+        }
+        function refresh2(){
+            var datanya = refresh();
+            var itemHtml = "<table> <tr> <th> Nama Barang</th>"
+            for (var i =0; i<datanya.length; i++){
+                var item = datanya[i].fields;
+                itemHtml += '<tr> <th>' + item.nama_barang+ '</th> <th>' + item.deskripsi + '</th> </tr>';
+            }
+            itemHtml += "</table>";
+            $('#lala').html(itemHtml);
+        }
+    </script>
+</table>
+<h5>Sesi terakhir login: {{ last_login }}</h5>
+<button><a href="{% url 'wishlist:logout' %}">Logout</a></button>
+
+{% endblock content %}
